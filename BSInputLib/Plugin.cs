@@ -20,7 +20,7 @@ namespace BSInputLib
 
         public void OnApplicationStart()
         {
-            Logger.LogLevel = LogLevel.Info;
+            Util.Logger.LogLevel = Util.LogLevel.Info;
 
             //SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
             //SceneManager.sceneLoaded += SceneManager_sceneLoaded;
@@ -54,19 +54,19 @@ namespace BSInputLib
                 switch (button)
                 {
                     case Button.A:
-                        Logger.Debug($"Right Button A {state}");
+                        Util.Logger.Debug($"Right Button A {state}");
                         break;
                     case Button.B:
-                        Logger.Debug($"Right Button B {state}");
+                        Util.Logger.Debug($"Right Button B {state}");
                         break;
                     case Button.Grip:
-                        Logger.Debug($"Right Button Grip {state}");
+                        Util.Logger.Debug($"Right Button Grip {state}");
                         break;
                     case Button.Joystick:
-                        Logger.Debug($"Right Button Joystick {state}");
+                        Util.Logger.Debug($"Right Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Logger.Debug($"Right Button Trigger {state}");
+                        Util.Logger.Debug($"Right Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -74,7 +74,7 @@ namespace BSInputLib
             }
             catch (Exception ex)
             {
-                Logger.Debug("", ex);
+                Util.Logger.Debug("", ex);
             }
         }
 
@@ -86,19 +86,19 @@ namespace BSInputLib
                 switch (button)
                 {
                     case Button.A:
-                        Logger.Debug($"Left Button A {state}");
+                        Util.Logger.Debug($"Left Button A {state}");
                         break;
                     case Button.B:
-                        Logger.Debug($"Left Button B {state}");
+                        Util.Logger.Debug($"Left Button B {state}");
                         break;
                     case Button.Grip:
-                        Logger.Debug($"Left Button Grip {state}");
+                        Util.Logger.Debug($"Left Button Grip {state}");
                         break;
                     case Button.Joystick:
-                        Logger.Debug($"Left Button Joystick {state}");
+                        Util.Logger.Debug($"Left Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Logger.Debug($"Left Button Trigger {state}");
+                        Util.Logger.Debug($"Left Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -106,7 +106,7 @@ namespace BSInputLib
             }
             catch (Exception ex)
             {
-                Logger.Debug("", ex);
+                Util.Logger.Debug("", ex);
             }
         }
 
@@ -118,19 +118,19 @@ namespace BSInputLib
                 switch (button)
                 {
                     case Button.A:
-                        Logger.Debug($"Right Button A {state}");
+                        Util.Logger.Debug($"Right Button A {state}");
                         break;
                     case Button.B:
-                        Logger.Debug($"Right Button B {state}");
+                        Util.Logger.Debug($"Right Button B {state}");
                         break;
                     case Button.Grip:
-                        Logger.Debug($"Right Button Grip {state}");
+                        Util.Logger.Debug($"Right Button Grip {state}");
                         break;
                     case Button.Joystick:
-                        Logger.Debug($"Right Button Joystick {state}");
+                        Util.Logger.Debug($"Right Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Logger.Debug($"Right Button Trigger {state}");
+                        Util.Logger.Debug($"Right Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -138,7 +138,7 @@ namespace BSInputLib
             }
             catch (Exception ex)
             {
-                Logger.Debug("", ex);
+                Util.Logger.Debug("", ex);
             }
         }
 
@@ -150,19 +150,19 @@ namespace BSInputLib
                 switch (button)
                 {
                     case Button.A:
-                        Logger.Debug($"Left Button A {state}");
+                        Util.Logger.Debug($"Left Button A {state}");
                         break;
                     case Button.B:
-                        Logger.Debug($"Left Button B {state}");
+                        Util.Logger.Debug($"Left Button B {state}");
                         break;
                     case Button.Grip:
-                        Logger.Debug($"Left Button Grip {state}");
+                        Util.Logger.Debug($"Left Button Grip {state}");
                         break;
                     case Button.Joystick:
-                        Logger.Debug($"Left Button Joystick {state}");
+                        Util.Logger.Debug($"Left Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Logger.Debug($"Left Button Trigger {state}");
+                        Util.Logger.Debug($"Left Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -170,7 +170,7 @@ namespace BSInputLib
             }
             catch (Exception ex)
             {
-                Logger.Debug("", ex);
+                Util.Logger.Debug("", ex);
             }
         }
 
