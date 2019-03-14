@@ -12,7 +12,7 @@ namespace BSInputLib
 {
     public static class OpenVRInput
     {
-        public static Valve.VR.CVRSystem openVR
+        public static Valve.VR.CVRSystem OpenVR
         {
             get
             {
@@ -29,7 +29,7 @@ namespace BSInputLib
             get
             {
                 if (_leftID == 0)
-                    _leftID = openVR.GetTrackedDeviceIndexForControllerRole(Valve.VR.ETrackedControllerRole.LeftHand);
+                    _leftID = OpenVR.GetTrackedDeviceIndexForControllerRole(Valve.VR.ETrackedControllerRole.LeftHand);
                 return _leftID;
             }
 
@@ -41,7 +41,7 @@ namespace BSInputLib
             get
             {
                 if (_rightID == 0)
-                    _rightID = openVR.GetTrackedDeviceIndexForControllerRole(Valve.VR.ETrackedControllerRole.RightHand);
+                    _rightID = OpenVR.GetTrackedDeviceIndexForControllerRole(Valve.VR.ETrackedControllerRole.RightHand);
                 return _rightID;
             }
 
@@ -92,7 +92,7 @@ namespace BSInputLib
             if (controller == 0)
                 return false;
             var state = new Valve.VR.VRControllerState_t();
-            var success = openVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
+            var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
             return (state.ulButtonPressed & button) != 0;
         }
 
@@ -106,7 +106,7 @@ namespace BSInputLib
             if (controller == 0)
                 return false;
             var state = new Valve.VR.VRControllerState_t();
-            var success = openVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
+            var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
             return (state.ulButtonTouched & button) != 0;
         }
 
@@ -118,7 +118,7 @@ namespace BSInputLib
         public static AxisValue GetAxisValue(uint controller, Axis axis)
         {
             var state = new Valve.VR.VRControllerState_t();
-            var success = openVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
+            var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
             switch (axis)
             {
                 case Axis.Joystick:

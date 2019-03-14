@@ -8,8 +8,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using IllusionPlugin;
-using VRUIControls;
-using UnityEngine.XR;
 
 
 namespace BSInputLib
@@ -18,44 +16,37 @@ namespace BSInputLib
     {
         public static string PluginName = "BSInputLib";
         public string Name => PluginName;
-        public string Version => "0.0.1";
+        public string Version => "0.1.0";
 
         public void OnApplicationStart()
         {
-            Logger.LogLevel = LogLevel.Debug;
+            Logger.LogLevel = LogLevel.Info;
 
             //SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
             //SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+            /*
+            OpenVRInput.RightController.ButtonPressChanged += OnRightButton;
+            OpenVRInput.LeftController.ButtonPressChanged += OnLeftButton;
 
-            OpenVRInput.RightController.ButtonPressChanged += onRightButton;
-            OpenVRInput.LeftController.ButtonPressChanged += onLeftButton;
-
-            OpenVRInput.RightController.ButtonTouchChanged += onRightButtonTouched;
-            OpenVRInput.LeftController.ButtonTouchChanged += onLeftButtonTouched;
-            
-
+            OpenVRInput.RightController.ButtonTouchChanged += OnRightButtonTouched;
+            OpenVRInput.LeftController.ButtonTouchChanged += OnLeftButtonTouched;
+            */
         }
 
         private void SceneManagerOnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
-
             if (newScene.name == "Menu")
             {
                 //Code to execute when entering The Menu
-
             }
 
             if (newScene.name == "GameCore")
             {
                 //Code to execute when entering actual gameplay
-
-
             }
-
-
         }
 
-        public void onRightButton(Button button, bool newState)
+        public void OnRightButton(Button button, bool newState)
         {
             try
             {
@@ -87,7 +78,7 @@ namespace BSInputLib
             }
         }
 
-        public void onLeftButton(Button button, bool newState)
+        public void OnLeftButton(Button button, bool newState)
         {
             try
             {
@@ -119,7 +110,7 @@ namespace BSInputLib
             }
         }
 
-        public void onRightButtonTouched(Button button, bool newState)
+        public void OnRightButtonTouched(Button button, bool newState)
         {
             try
             {
@@ -151,7 +142,7 @@ namespace BSInputLib
             }
         }
 
-        public void onLeftButtonTouched(Button button, bool newState)
+        public void OnLeftButtonTouched(Button button, bool newState)
         {
             try
             {
@@ -189,17 +180,16 @@ namespace BSInputLib
             //Create GameplayOptions/SettingsUI if using either
             if (scene.name == "Menu")
                 UI.BasicUI.CreateUI();
-
         }
 
         public void OnApplicationQuit()
         {
             SceneManager.activeSceneChanged -= SceneManagerOnActiveSceneChanged;
             SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
-            OpenVRInput.RightController.ButtonPressChanged -= onRightButton;
-            OpenVRInput.LeftController.ButtonPressChanged -= onLeftButton;
-            OpenVRInput.RightController.ButtonTouchChanged -= onRightButtonTouched;
-            OpenVRInput.LeftController.ButtonTouchChanged -= onLeftButtonTouched;
+            OpenVRInput.RightController.ButtonPressChanged -= OnRightButton;
+            OpenVRInput.LeftController.ButtonPressChanged -= OnLeftButton;
+            OpenVRInput.RightController.ButtonTouchChanged -= OnRightButtonTouched;
+            OpenVRInput.LeftController.ButtonTouchChanged -= OnLeftButtonTouched;
         }
 
         public void OnLevelWasLoaded(int level)
@@ -213,16 +203,8 @@ namespace BSInputLib
 
         public void OnUpdate()
         {
-            try
-            {
-                OpenVRInput.LeftController.UpdateState();
-                OpenVRInput.RightController.UpdateState();
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception("", ex);
-            }
-
+            OpenVRInput.LeftController.UpdateState();
+            OpenVRInput.RightController.UpdateState();
         }
 
         public void OnFixedUpdate()
