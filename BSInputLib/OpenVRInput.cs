@@ -149,68 +149,6 @@ namespace BSInputLib
         private bool _Joystick_Touched;
         private bool _Trigger_Touched;
 
-        public bool Button_A
-        {
-            get { return _Button_A_Pressed; }
-            set
-            {
-                if (_Button_A_Pressed != value)
-                {
-                    _Button_A_Pressed = value;
-                    ButtonPressChanged(Button.A, _Button_A_Pressed);
-                }
-
-            }
-        }
-        public bool Button_B
-        {
-            get { return _Button_B_Pressed; }
-            set
-            {
-                if (_Button_B_Pressed != value)
-                {
-                    _Button_B_Pressed = value;
-                    ButtonPressChanged(Button.B, _Button_B_Pressed);
-                }
-            }
-        }
-        public bool Grip
-        {
-            get { return _Grip_Pressed; }
-            set
-            {
-                if (_Grip_Pressed != value)
-                {
-                    _Grip_Pressed = value;
-                    ButtonPressChanged(Button.Grip, _Grip_Pressed);
-                }
-            }
-        }
-        public bool Joystick
-        {
-            get { return _Joystick_Pressed; }
-            set
-            {
-                if (_Joystick_Pressed != value)
-                {
-                    _Joystick_Pressed = value;
-                    ButtonPressChanged(Button.Joystick, _Joystick_Pressed);
-                }
-            }
-        }
-        public bool Trigger
-        {
-            get { return _Trigger_Pressed; }
-            set
-            {
-                if (_Trigger_Pressed != value)
-                {
-                    _Trigger_Pressed = value;
-                    ButtonPressChanged(Button.Trigger, _Trigger_Pressed);
-                }
-            }
-        }
-
         public bool GetButtonPressed(Button button)
         {
             bool val = OpenVRInput.GetIsPressed(_controllerID, button);
@@ -272,7 +210,6 @@ namespace BSInputLib
             }
             return val;
         }
-
 
         public AxisValue GripAxis
         {
