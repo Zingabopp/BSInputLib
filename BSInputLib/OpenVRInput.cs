@@ -20,6 +20,7 @@ namespace BSInputLib
             }
         }
 
+        private static Valve.VR.VRControllerState_t state = new Valve.VR.VRControllerState_t();
         public readonly static ControllerState RightController = new ControllerState(Controller.RightHand);
         public readonly static ControllerState LeftController = new ControllerState(Controller.LeftHand);
 
@@ -63,36 +64,31 @@ namespace BSInputLib
 
         public static ulong GetButtonMask(Button button)
         {
-            ulong mask = 0;
             switch (button)
             {
                 case Button.A:
-                    mask = (1UL << (int) Valve.VR.EVRButtonId.k_EButton_A);
-                    break;
+                    return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_A);
                 case Button.B:
-                    mask = (1UL << (int) Valve.VR.EVRButtonId.k_EButton_ApplicationMenu);
-                    break;
+                    return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_ApplicationMenu);
                 case Button.Grip:
-                    mask = (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Grip);
-                    break;
+                    return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Grip);
                 case Button.Joystick:
-                    mask = (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Axis0);
-                    break;
+                    return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Axis0);
                 case Button.Trigger:
-                    mask = (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Axis1);
-                    break;
+                    return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Axis1);
                 default:
-                    break;
+                    return 0;
             }
-            return mask;
         }
 
         public static bool GetIsPressed(uint controller, ulong button)
         {
             if (controller == 0)
                 return false;
-            var state = new Valve.VR.VRControllerState_t();
+            //var state = new Valve.VR.VRControllerState_t();
             var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
+            if (!success)
+                return false;
             return (state.ulButtonPressed & button) != 0;
         }
 
@@ -105,8 +101,10 @@ namespace BSInputLib
         {
             if (controller == 0)
                 return false;
-            var state = new Valve.VR.VRControllerState_t();
+            //var state = new Valve.VR.VRControllerState_t();
             var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
+            if (!success)
+                return false;
             return (state.ulButtonTouched & button) != 0;
         }
 
@@ -117,7 +115,7 @@ namespace BSInputLib
 
         public static AxisValue GetAxisValue(uint controller, Axis axis)
         {
-            var state = new Valve.VR.VRControllerState_t();
+            //var state = new Valve.VR.VRControllerState_t();
             var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
             switch (axis)
             {
@@ -304,19 +302,19 @@ namespace BSInputLib
 
     public enum Axis
     {
-        Joystick, // Vive touchpad, Oculus joystick, Axis0
-        Trigger, // Vive/Oculus trigger, Axis1
-        Grip,  // Vive?, Oculus grip, Axis2
+        Joystick, // Vive touchpad, Oculus joystick, WMR touchpad, Axis0
+        Trigger, // Vive/Oculus/WMR trigger, Axis1
+        Grip,  // Vive?, Oculus grip, WMR joystick, Axis2
         Axis3,
         Axis4
     }
 
     public enum Button
     {
-        A,
-        B,
+        A, // Does not exist on WMR or Vive?
+        B, // Application menu button
         Grip,
-        Joystick,
+        Joystick, // Maybe doesn't work on WMR, brings up menu?
         Trigger
     }
 
