@@ -115,7 +115,7 @@ namespace BSInputLib
             return GetIsTouched(controller, GetButtonMask(button));
         }
 
-        public static AxisValue GetAxis(uint controller, Axis axis)
+        public static AxisValue GetAxisValue(uint controller, Axis axis)
         {
             var state = new Valve.VR.VRControllerState_t();
             var success = openVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
@@ -127,6 +127,10 @@ namespace BSInputLib
                     return new AxisValue(state.rAxis1);
                 case Axis.Grip:
                     return new AxisValue(state.rAxis2);
+                case Axis.Axis3:
+                    return new AxisValue(state.rAxis3);
+                case Axis.Axis4:
+                    return new AxisValue(state.rAxis4);
                 default:
                     return new AxisValue(0, 0);
             }
@@ -211,28 +215,9 @@ namespace BSInputLib
             return val;
         }
 
-        public AxisValue GripAxis
+        public AxisValue GetAxisValue(Axis axis)
         {
-            get
-            {
-                return OpenVRInput.GetAxis(_controllerID, Axis.Grip);
-            }
-        }
-
-        public AxisValue JoystickAxis
-        {
-            get
-            {
-                return OpenVRInput.GetAxis(_controllerID, Axis.Joystick);
-            }
-        }
-
-        public AxisValue TriggerAxis
-        {
-            get
-            {
-                return OpenVRInput.GetAxis(_controllerID, Axis.Trigger);
-            }
+            return OpenVRInput.GetAxisValue(_controllerID, axis);
         }
 
         public bool GetLastState(Button button, InputType _type)
@@ -291,7 +276,6 @@ namespace BSInputLib
         public ControllerState(Controller ctlr)
         {
             _controllerID = OpenVRInput.GetControllerID(ctlr);
-            UpdateState();
         }
 
         public void UpdateState()
@@ -320,9 +304,11 @@ namespace BSInputLib
 
     public enum Axis
     {
-        Joystick,
-        Trigger,
-        Grip
+        Joystick, // Vive touchpad, Oculus joystick, Axis0
+        Trigger, // Vive/Oculus trigger, Axis1
+        Grip,  // Vive?, Oculus grip, Axis2
+        Axis3,
+        Axis4
     }
 
     public enum Button

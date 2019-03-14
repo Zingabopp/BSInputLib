@@ -198,6 +198,8 @@ namespace BSInputLib
             SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
             OpenVRInput.RightController.ButtonPressChanged -= onRightButton;
             OpenVRInput.LeftController.ButtonPressChanged -= onLeftButton;
+            OpenVRInput.RightController.ButtonTouchChanged -= onRightButtonTouched;
+            OpenVRInput.LeftController.ButtonTouchChanged -= onLeftButtonTouched;
         }
 
         public void OnLevelWasLoaded(int level)
