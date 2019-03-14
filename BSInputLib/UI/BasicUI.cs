@@ -13,8 +13,8 @@ namespace BSInputLib.UI
         public static void CreateUI()
         {
             //This will create the UI for the plugin when called, keep in mind that the mod will require CustomUI when executing this as it calls functions etc from the library
-            CreateGameplayOptionsUI();
-            CreateSettingsUI();
+            //CreateGameplayOptionsUI();
+            //CreateSettingsUI();
 
 
 

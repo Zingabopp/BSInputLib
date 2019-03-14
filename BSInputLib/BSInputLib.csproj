@@ -37,6 +37,9 @@
       <HintPath>.\References\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>References\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="BeatSaberCustomUI">
       <HintPath>.\References\Plugins\BeatSaberCustomUI.dll</HintPath>
       <Private>False</Private>
@@ -85,11 +88,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OpenVRInput.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\BasicUI.cs" />
     <Compile Include="Util\Logger.cs" />
-    <Compile Include="Util\ReflectionUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CreateJunctions.bat" />
