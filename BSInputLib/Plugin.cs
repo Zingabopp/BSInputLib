@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Media;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using IllusionPlugin;
+using System.Runtime.InteropServices;
 
 
 namespace BSInputLib
@@ -16,21 +16,24 @@ namespace BSInputLib
     {
         public static string PluginName = "BSInputLib";
         public string Name => PluginName;
-        public string Version => "0.1.0";
+        public string Version => "0.2.0";
 
         public void OnApplicationStart()
         {
-            Util.Logger.LogLevel = Util.LogLevel.Info;
+            Util.Logger.LogLevel = Util.LogLevel.Debug;
 
             //SceneManager.activeSceneChanged += SceneManagerOnActiveSceneChanged;
             //SceneManager.sceneLoaded += SceneManager_sceneLoaded;
-            /*
+            OpenVRInput.RightController.UpdateState();
+            OpenVRInput.LeftController.UpdateState();
+            // For testing purposes, use LogLevel.Debug
             OpenVRInput.RightController.ButtonPressChanged += OnRightButton;
             OpenVRInput.LeftController.ButtonPressChanged += OnLeftButton;
 
             OpenVRInput.RightController.ButtonTouchChanged += OnRightButtonTouched;
             OpenVRInput.LeftController.ButtonTouchChanged += OnLeftButtonTouched;
-            */
+
+
         }
 
         private void SceneManagerOnActiveSceneChanged(Scene oldScene, Scene newScene)
@@ -48,25 +51,26 @@ namespace BSInputLib
 
         public void OnRightButton(Button button, bool newState)
         {
+            Console.WriteLine($"{button.ToString()} is now {newState}");
             try
             {
                 string state = newState ? "Pressed" : "Released";
                 switch (button)
                 {
                     case Button.A:
-                        Util.Logger.Debug($"Right Button A {state}");
+                        Util.Logger.Info($"Right Button A {state}");
                         break;
-                    case Button.B:
-                        Util.Logger.Debug($"Right Button B {state}");
+                    case Button.AppMenu:
+                        Util.Logger.Info($"Right Button AppMenu {state}");
                         break;
                     case Button.Grip:
-                        Util.Logger.Debug($"Right Button Grip {state}");
+                        Util.Logger.Info($"Right Button Grip {state}");
                         break;
-                    case Button.Joystick:
-                        Util.Logger.Debug($"Right Button Joystick {state}");
+                    case Button.Touchpad:
+                        Util.Logger.Info($"Right Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Util.Logger.Debug($"Right Button Trigger {state}");
+                        Util.Logger.Info($"Right Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -86,19 +90,19 @@ namespace BSInputLib
                 switch (button)
                 {
                     case Button.A:
-                        Util.Logger.Debug($"Left Button A {state}");
+                        Util.Logger.Info($"Left Button A {state}");
                         break;
-                    case Button.B:
-                        Util.Logger.Debug($"Left Button B {state}");
+                    case Button.AppMenu:
+                        Util.Logger.Info($"Left Button AppMenu {state}");
                         break;
                     case Button.Grip:
-                        Util.Logger.Debug($"Left Button Grip {state}");
+                        Util.Logger.Info($"Left Button Grip {state}");
                         break;
-                    case Button.Joystick:
-                        Util.Logger.Debug($"Left Button Joystick {state}");
+                    case Button.Touchpad:
+                        Util.Logger.Info($"Left Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Util.Logger.Debug($"Left Button Trigger {state}");
+                        Util.Logger.Info($"Left Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -118,19 +122,19 @@ namespace BSInputLib
                 switch (button)
                 {
                     case Button.A:
-                        Util.Logger.Debug($"Right Button A {state}");
+                        Util.Logger.Info($"Right Button A {state}");
                         break;
-                    case Button.B:
-                        Util.Logger.Debug($"Right Button B {state}");
+                    case Button.AppMenu:
+                        Util.Logger.Info($"Right Button AppMenu {state}");
                         break;
                     case Button.Grip:
-                        Util.Logger.Debug($"Right Button Grip {state}");
+                        Util.Logger.Info($"Right Button Grip {state}");
                         break;
-                    case Button.Joystick:
-                        Util.Logger.Debug($"Right Button Joystick {state}");
+                    case Button.Touchpad:
+                        Util.Logger.Info($"Right Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Util.Logger.Debug($"Right Button Trigger {state}");
+                        Util.Logger.Info($"Right Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -150,19 +154,19 @@ namespace BSInputLib
                 switch (button)
                 {
                     case Button.A:
-                        Util.Logger.Debug($"Left Button A {state}");
+                        Util.Logger.Info($"Left Button A {state}");
                         break;
-                    case Button.B:
-                        Util.Logger.Debug($"Left Button B {state}");
+                    case Button.AppMenu:
+                        Util.Logger.Info($"Left Button AppMenu {state}");
                         break;
                     case Button.Grip:
-                        Util.Logger.Debug($"Left Button Grip {state}");
+                        Util.Logger.Info($"Left Button Grip {state}");
                         break;
-                    case Button.Joystick:
-                        Util.Logger.Debug($"Left Button Joystick {state}");
+                    case Button.Touchpad:
+                        Util.Logger.Info($"Left Button Joystick {state}");
                         break;
                     case Button.Trigger:
-                        Util.Logger.Debug($"Left Button Trigger {state}");
+                        Util.Logger.Info($"Left Button Trigger {state}");
                         break;
                     default:
                         break;
@@ -178,8 +182,8 @@ namespace BSInputLib
         private void SceneManager_sceneLoaded(Scene scene, LoadSceneMode arg1)
         {
             //Create GameplayOptions/SettingsUI if using either
-            if (scene.name == "Menu")
-                UI.BasicUI.CreateUI();
+            //if (scene.name == "Menu")
+            //UI.BasicUI.CreateUI();
         }
 
         public void OnApplicationQuit()
@@ -200,11 +204,13 @@ namespace BSInputLib
         public void OnLevelWasInitialized(int level)
         {
         }
-
+        
         public void OnUpdate()
         {
-            OpenVRInput.LeftController.UpdateState();
-            OpenVRInput.RightController.UpdateState();
+            //OpenVRInput.LeftController.UpdateState();
+            //OpenVRInput.RightController.UpdateState();
+            OpenVRInput.CheckEvents();
+            
         }
 
         public void OnFixedUpdate()

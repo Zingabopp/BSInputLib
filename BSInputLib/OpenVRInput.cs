@@ -21,58 +21,113 @@ namespace BSInputLib
         }
 
         private static Valve.VR.VRControllerState_t state = new Valve.VR.VRControllerState_t();
-        public readonly static ControllerState RightController = new ControllerState(Controller.RightHand);
-        public readonly static ControllerState LeftController = new ControllerState(Controller.LeftHand);
+        private static ControllerState _hmd;
+        private static ControllerState _RightController;
+        private static ControllerState _LeftController;
+
+        public static ControllerState HMD
+        {
+            get
+            {
+                if (_hmd == null)
+                    _hmd = new ControllerState(DeviceRole.HMD);
+                return _hmd;
+            }
+        }
+        public static ControllerState RightController
+        {
+            get
+            {
+                if (_RightController == null)
+                    _RightController = new ControllerState(DeviceRole.RightHand);
+                return _RightController;
+            }
+        }
+        public static ControllerState LeftController
+        {
+            get
+            {
+                if (_LeftController == null)
+                    _LeftController = new ControllerState(DeviceRole.LeftHand);
+                return _LeftController;
+            }
+        }
 
         private static uint _leftID = 0;
+        /// <summary>
+        /// Device ID for the left controller.
+        /// </summary>
         public static uint LeftControllerID
         {
             get
             {
                 if (_leftID == 0)
                     _leftID = OpenVR.GetTrackedDeviceIndexForControllerRole(Valve.VR.ETrackedControllerRole.LeftHand);
+                if (_leftID > 20)
+                    _leftID = 0;
                 return _leftID;
             }
 
         }
 
         private static uint _rightID = 0;
+        /// <summary>
+        /// Device ID for the right controller.
+        /// </summary>
         public static uint RightControllerID
         {
             get
             {
                 if (_rightID == 0)
                     _rightID = OpenVR.GetTrackedDeviceIndexForControllerRole(Valve.VR.ETrackedControllerRole.RightHand);
+                if (_rightID > 20)
+                    _rightID = 0;
                 return _rightID;
             }
 
         }
+
+        /// <summary>
+        /// Below this amount, axis will read as 0.
+        /// </summary>
         public static float AxisDeadzone = 0.0001f;
 
-        public static uint GetControllerID(Controller _controller)
+        /// <summary>
+        /// Returns the controller ID for the specified controller.
+        /// </summary>
+        /// <param name="_controller"></param>
+        /// <returns></returns>
+        public static uint GetControllerID(DeviceRole _controller)
         {
             switch (_controller)
             {
-                case Controller.LeftHand:
+                case DeviceRole.HMD:
+                    return 0;
+                case DeviceRole.LeftHand:
                     return LeftControllerID;
-                case Controller.RightHand:
+                case DeviceRole.RightHand:
                     return RightControllerID;
                 default:
-                    return 0;
+                    return 99;
             }
         }
 
+        /// <summary>
+        /// Returns the button mask for the specified Button.
+        /// </summary>
+        /// <param name="button"></param>
+        /// <returns></returns>
         public static ulong GetButtonMask(Button button)
         {
             switch (button)
             {
                 case Button.A:
                     return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_A);
-                case Button.B:
+                case Button.AppMenu:
                     return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_ApplicationMenu);
                 case Button.Grip:
                     return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Grip);
-                case Button.Joystick:
+                case Button.Touchpad:
                     return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Axis0);
                 case Button.Trigger:
                     return (1UL << (int) Valve.VR.EVRButtonId.k_EButton_Axis1);
@@ -81,6 +136,12 @@ namespace BSInputLib
             }
         }
 
+        /// <summary>
+        /// Returns true if the button is currently being pressed.
+        /// </summary>
+        /// <param name="controller">Device ID of the controller</param>
+        /// <param name="button">Button mask of the button to check</param>
+        /// <returns></returns>
         public static bool GetIsPressed(uint controller, ulong button)
         {
             if (controller == 0)
@@ -88,42 +149,69 @@ namespace BSInputLib
             //var state = new Valve.VR.VRControllerState_t();
             var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
             if (!success)
+            {
+                //Util.Logger.Error($"Couldn't get controller state: {controller}");
                 return false;
+            }
             return (state.ulButtonPressed & button) != 0;
         }
 
+        /// <summary>
+        /// Returns true if the Button is currently being pressed.
+        /// </summary>
+        /// <param name="controller">Device ID of the controller</param>
+        /// <param name="button"></param>
+        /// <returns></returns>
         public static bool GetIsPressed(uint controller, Button button)
         {
             return GetIsPressed(controller, GetButtonMask(button));
         }
 
+        /// <summary>
+        /// Returns true if the button is being touched (Oculus).
+        /// </summary>
+        /// <param name="controller">Device ID of the controller</param>
+        /// <param name="button">Buttom mask of the button to check</param>
+        /// <returns></returns>
         public static bool GetIsTouched(uint controller, ulong button)
         {
             if (controller == 0)
                 return false;
-            //var state = new Valve.VR.VRControllerState_t();
-            var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
+            var locState = new Valve.VR.VRControllerState_t();
+            var success = OpenVR.GetControllerState(controller, ref locState, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
             if (!success)
                 return false;
             return (state.ulButtonTouched & button) != 0;
         }
 
+        /// <summary>
+        /// Returns true if the button is being touched (Oculus).
+        /// </summary>
+        /// <param name="controller">Device ID of the controller.</param>
+        /// <param name="button"></param>
+        /// <returns></returns>
         public static bool GetIsTouched(uint controller, Button button)
         {
             return GetIsTouched(controller, GetButtonMask(button));
         }
 
+        /// <summary>
+        /// Returns an AxisValue with the X and Y values of the specified Axis.
+        /// </summary>
+        /// <param name="controller">Device ID of the controller</param>
+        /// <param name="axis">Axis to check.</param>
+        /// <returns></returns>
         public static AxisValue GetAxisValue(uint controller, Axis axis)
         {
             //var state = new Valve.VR.VRControllerState_t();
             var success = OpenVR.GetControllerState(controller, ref state, (uint) Marshal.SizeOf(typeof(Valve.VR.VRControllerState_t)));
             switch (axis)
             {
-                case Axis.Joystick:
+                case Axis.Axis0:
                     return new AxisValue(state.rAxis0);
-                case Axis.Trigger:
+                case Axis.Axis1:
                     return new AxisValue(state.rAxis1);
-                case Axis.Grip:
+                case Axis.Axis2:
                     return new AxisValue(state.rAxis2);
                 case Axis.Axis3:
                     return new AxisValue(state.rAxis3);
@@ -133,228 +221,88 @@ namespace BSInputLib
                     return new AxisValue(0, 0);
             }
         }
-    }
 
-    public class ControllerState
-    {
-        private readonly uint _controllerID;
-
-        private bool _Button_A_Pressed;
-        private bool _Button_B_Pressed;
-        private bool _Grip_Pressed;
-        private bool _Joystick_Pressed;
-        private bool _Trigger_Pressed;
-
-        private bool _Button_A_Touched;
-        private bool _Button_B_Touched;
-        private bool _Grip_Touched;
-        private bool _Joystick_Touched;
-        private bool _Trigger_Touched;
-
-        public bool GetButtonPressed(Button button)
+        private static Valve.VR.VREvent_t vrEvent;
+        private static uint vrEventSize = (uint) Marshal.SizeOf(typeof(Valve.VR.VREvent_t));
+        private static Valve.VR.ETrackedPropertyError etpErr;
+        public static void CheckEvents()
         {
-            bool val = OpenVRInput.GetIsPressed(_controllerID, button);
-
-            if (val != GetLastState(button, InputType.Press))
+            try
             {
-                switch (button)
+                while (OpenVRInput.OpenVR.PollNextEvent(ref vrEvent, vrEventSize))
                 {
-                    case Button.A:
-                        _Button_A_Pressed = val;
-                        break;
-                    case Button.B:
-                        _Button_B_Pressed = val;
-                        break;
-                    case Button.Grip:
-                        _Grip_Pressed = val;
-                        break;
-                    case Button.Joystick:
-                        _Joystick_Pressed = val;
-                        break;
-                    case Button.Trigger:
-                        _Trigger_Pressed = val;
-                        break;
-                    default:
-                        break;
-                }
-                ButtonPressChanged(button, val);
-            }
-            return val;
-        }
-
-        public bool GetButtonTouched(Button button)
-        {
-            bool val = OpenVRInput.GetIsTouched(_controllerID, button);
-
-            if (val != GetLastState(button, InputType.Touch))
-            {
-                switch (button)
-                {
-                    case Button.A:
-                        _Button_A_Touched = val;
-                        break;
-                    case Button.B:
-                        _Button_B_Touched = val;
-                        break;
-                    case Button.Grip:
-                        _Grip_Touched = val;
-                        break;
-                    case Button.Joystick:
-                        _Joystick_Touched = val;
-                        break;
-                    case Button.Trigger:
-                        _Trigger_Touched = val;
-                        break;
-                    default:
-                        break;
-                }
-                ButtonTouchChanged(button, val);
-            }
-            return val;
-        }
-
-        public AxisValue GetAxisValue(Axis axis)
-        {
-            return OpenVRInput.GetAxisValue(_controllerID, axis);
-        }
-
-        public bool GetLastState(Button button, InputType _type)
-        {
-            bool val = false;
-            if (_type == InputType.Press)
-            {
-                switch (button)
-                {
-                    case Button.A:
-                        val = _Button_A_Pressed;
-                        break;
-                    case Button.B:
-                        val = _Button_B_Pressed;
-                        break;
-                    case Button.Grip:
-                        val = _Grip_Pressed;
-                        break;
-                    case Button.Joystick:
-                        val = _Joystick_Pressed;
-                        break;
-                    case Button.Trigger:
-                        val = _Trigger_Pressed;
-                        break;
-                    default:
-                        break;
+                    switch (vrEvent.eventType)
+                    {
+                        case (uint) Valve.VR.EVREventType.VREvent_ButtonPress:
+                            HandleButtonPress(vrEvent);
+                            break;
+                        case (uint) Valve.VR.EVREventType.VREvent_ButtonUnpress:
+                            HandleButtonUnpress(vrEvent);
+                            break;
+                        case (uint) Valve.VR.EVREventType.VREvent_ButtonTouch:
+                            HandleButtonTouch(vrEvent);
+                            break;
+                        case (uint) Valve.VR.EVREventType.VREvent_ButtonUntouch:
+                            HandleButtonUntouch(vrEvent);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                switch (button)
-                {
-                    case Button.A:
-                        val = _Button_A_Touched;
-                        break;
-                    case Button.B:
-                        val = _Button_B_Touched;
-                        break;
-                    case Button.Grip:
-                        val = _Grip_Touched;
-                        break;
-                    case Button.Joystick:
-                        val = _Joystick_Touched;
-                        break;
-                    case Button.Trigger:
-                        val = _Trigger_Touched;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return val;
-        }
-
-        public ControllerState(Controller ctlr)
-        {
-            _controllerID = OpenVRInput.GetControllerID(ctlr);
-        }
-
-        public void UpdateState()
-        {
-            if (ButtonPressChanged != null)
-            {
-                GetButtonPressed(Button.A);
-                GetButtonPressed(Button.B);
-                GetButtonPressed(Button.Grip);
-                GetButtonPressed(Button.Joystick);
-                GetButtonPressed(Button.Trigger);
-            }
-            if (ButtonTouchChanged != null)
-            {
-                GetButtonTouched(Button.A);
-                GetButtonTouched(Button.B);
-                GetButtonTouched(Button.Grip);
-                GetButtonTouched(Button.Joystick);
-                GetButtonTouched(Button.Trigger);
+                Util.Logger.Exception("Exception getting event", ex);
             }
         }
 
-        public event Action<Button, bool> ButtonPressChanged;
-        public event Action<Button, bool> ButtonTouchChanged;
-    }
-
-    public enum Axis
-    {
-        Joystick, // Vive touchpad, Oculus joystick, WMR touchpad, Axis0
-        Trigger, // Vive/Oculus/WMR trigger, Axis1
-        Grip,  // Vive?, Oculus grip, WMR joystick, Axis2
-        Axis3,
-        Axis4
-    }
-
-    public enum Button
-    {
-        A, // Does not exist on WMR or Vive?
-        B, // Application menu button
-        Grip,
-        Joystick, // Maybe doesn't work on WMR, brings up menu?
-        Trigger
-    }
-
-    public enum Controller
-    {
-        LeftHand,
-        RightHand
-    }
-
-    public enum InputType
-    {
-        Press,
-        Touch
-    }
-
-    public struct AxisValue
-    {
-        public float x;
-        public float y;
-
-        public AxisValue(float _x, float _y)
+        private static void HandleButtonPress(Valve.VR.VREvent_t vrEvt)
         {
-            x = _x;
-            y = _y;
+            Util.Logger.Debug($"Button pressed on device {vrEvt.trackedDeviceIndex} ({GetDeviceRoleFromDevIndex(vrEvt.trackedDeviceIndex).ToString()}): {vrEvt.data.controller.button}");
+            StringBuilder serialBuffer = new StringBuilder();
+            OpenVR.GetStringTrackedDeviceProperty(vrEvt.trackedDeviceIndex, Valve.VR.ETrackedDeviceProperty.Prop_ModelNumber_String, serialBuffer, 65535, ref etpErr);
+            //Console.WriteLine($"Error State: {etpErr.ToString()}");
+            Util.Logger.Debug($"Model: {serialBuffer}");
         }
 
-        public AxisValue(Valve.VR.VRControllerAxis_t axis)
+        private static void HandleButtonUnpress(Valve.VR.VREvent_t vrEvt)
         {
-            x = axis.x;
-            y = axis.y;
-            if (Math.Abs(x) < OpenVRInput.AxisDeadzone)
-                x = 0;
-            if (Math.Abs(y) < OpenVRInput.AxisDeadzone)
-                y = 0;
+            Util.Logger.Debug($"Button released on device {vrEvt.trackedDeviceIndex} ({GetDeviceRoleFromDevIndex(vrEvt.trackedDeviceIndex).ToString()}): {vrEvt.data.controller.button}");
         }
 
-        public override string ToString()
+        private static void HandleButtonTouch(Valve.VR.VREvent_t vrEvt)
         {
-            return $"X: {x}, Y: {y}";
+            Util.Logger.Debug($"Button touched on device {vrEvt.trackedDeviceIndex} ({GetDeviceRoleFromDevIndex(vrEvt.trackedDeviceIndex).ToString()}): {vrEvt.data.controller.button}");
+        }
+
+        private static void HandleButtonUntouch(Valve.VR.VREvent_t vrEvt)
+        {
+            Util.Logger.Debug($"Button untouched on device {vrEvt.trackedDeviceIndex} ({GetDeviceRoleFromDevIndex(vrEvt.trackedDeviceIndex).ToString()}): {vrEvt.data.controller.button}");
+        }
+
+        private static DeviceRole GetDeviceRoleFromDevIndex(uint devIndex)
+        {
+            return GetDeviceRoleFromRoleHint(SteamVR.instance.hmd.GetInt32TrackedDeviceProperty(devIndex, Valve.VR.ETrackedDeviceProperty.Prop_ControllerRoleHint_Int32, ref etpErr));
+        }
+
+        private static DeviceRole GetDeviceRoleFromRoleHint(int role)
+        {
+            DeviceRole ctrl = DeviceRole.Unknown;
+            switch (role)
+            {
+                case 0:
+                    ctrl = DeviceRole.HMD;
+                    break;
+                case 1:
+                    ctrl = DeviceRole.LeftHand;
+                    break;
+                case 2:
+                    ctrl = DeviceRole.RightHand;
+                    break;
+                default:
+                    break;
+            }
+            return ctrl;
         }
     }
-
 }
